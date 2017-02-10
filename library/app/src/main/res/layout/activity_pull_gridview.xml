@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.longzhiye.android.lib.ui.view.pulltorefreshview.MySwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/msr"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <GridView
+        android:id="@+id/gv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="auto_fit" />
+
+</com.longzhiye.android.lib.ui.view.pulltorefreshview.MySwipeRefreshLayout>
