@@ -19,7 +19,6 @@ import java.util.Map;
  */
 public class JSONUtil {
 
-
     /**
      * 实现单例
      */
@@ -189,5 +188,6 @@ public class JSONUtil {
         }
         return objMap;
     }
+
 
 }

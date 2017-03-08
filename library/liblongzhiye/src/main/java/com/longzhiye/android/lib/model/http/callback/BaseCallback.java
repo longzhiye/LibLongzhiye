@@ -42,11 +42,13 @@ public abstract class BaseCallback<T> {
     public abstract void onResponse(T response);
 
     /**
-     * 返回财务
+     * 返回错误
      *
-     * @param errorCode 错误类型
+     * @param context   上下文
+     * @param errorCode 错误码
+     * @param errorTip  错误提示
      */
-    public abstract void onError(Context context, int errorCode);
+    public abstract void onError(Context context, int errorCode, String errorTip);
 
     /**
      * 设置转换类型数据

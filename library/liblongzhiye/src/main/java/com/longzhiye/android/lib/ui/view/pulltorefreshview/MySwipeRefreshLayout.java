@@ -142,8 +142,6 @@ public class MySwipeRefreshLayout extends SuperSwipeRefreshLayout {
 
         @Override
         public void onPushDistance(int distance) {
-            // TODO Auto-generated method stub
-
         }
 
     }

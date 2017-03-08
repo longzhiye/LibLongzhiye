@@ -66,6 +66,15 @@ public interface TitleBarInterface {
                                               View.OnClickListener paramOnClickListener);
 
     /**
+     * 设置右边第二个按钮
+     *
+     * @param paramCharSequence
+     * @param paramOnClickListener
+     */
+    public abstract void setRightButtonSecond(CharSequence paramCharSequence,
+                                              View.OnClickListener paramOnClickListener);
+
+    /**
      * 设置右边第三按钮
      *
      * @param paramInt

@@ -79,6 +79,16 @@ public class TitleBarImpl implements TitleBarInterface {
     }
 
     @Override
+    public void setRightButtonSecond(CharSequence paramCharSequence, View.OnClickListener paramOnClickListener) {
+        this.paramTitleBar.setRightButtonSecondVisible(true);
+        this.paramTitleBar.setRightButtonSecondText(paramCharSequence);
+        if (paramOnClickListener != null) {
+            this.paramTitleBar.getRightButtonSecond().setOnClickListener(
+                    paramOnClickListener);
+        }
+    }
+
+    @Override
     public void setRightButtonThirdly(int paramInt, View.OnClickListener paramOnClickListener) {
         if (paramInt == 0) {
             this.paramTitleBar.setRightButtonThirdlyVisible(false);

@@ -16,6 +16,7 @@ public class DataCleanManager {
 
     /**
      * 获取总缓存大小（带数据格式）
+     *
      * @param context
      * @return
      * @throws Exception
@@ -54,6 +55,9 @@ public class DataCleanManager {
     //Context.getExternalCacheDir() --> SDCard/Android/data/你的应用包名/cache/目录，一般存放临时缓存数据
     public static long getFolderSize(File file) throws Exception {
         long size = 0;
+        if (file.exists() == false) {
+            return size;
+        }
         try {
             File[] fileList = file.listFiles();
             for (int i = 0; i < fileList.length; i++) {
@@ -106,6 +110,34 @@ public class DataCleanManager {
         BigDecimal result4 = new BigDecimal(teraBytes);
         return result4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString()
                 + "TB";
+    }
+
+    /**
+     * 递归删除文件和文件夹
+     *
+     * @param path 要删除的根目录
+     */
+    public static void deleteFile(String path) {
+        File file = new File(path);
+        if (file.exists() == false) {
+            return;
+        } else {
+            if (file.isFile()) {
+                file.delete();
+                return;
+            }
+            if (file.isDirectory()) {
+                File[] childFile = file.listFiles();
+                if (childFile == null || childFile.length == 0) {
+                    file.delete();
+                    return;
+                }
+                for (File f : childFile) {
+                    deleteFile(f.getAbsolutePath());
+                }
+                file.delete();
+            }
+        }
     }
 
 }

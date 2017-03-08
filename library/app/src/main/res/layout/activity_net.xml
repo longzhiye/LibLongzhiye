@@ -12,7 +12,11 @@
         <TextView
             android:layout_width="match_parent"
             android:gravity="center"
+            android:background="@android:color/holo_red_dark"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_large"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
             android:text="对象请求" />
 
         <TextView
@@ -24,7 +28,11 @@
         <TextView
             android:layout_width="match_parent"
             android:gravity="center"
+            android:background="@android:color/holo_blue_dark"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_large"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
             android:text="对象请求" />
 
         <TextView
@@ -37,6 +45,10 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_height="wrap_content"
+            android:background="@android:color/holo_orange_dark"
+            android:textSize="@dimen/text_size_large"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
             android:text="List请求" />
 
         <TextView
@@ -48,18 +60,23 @@
         <TextView
             android:layout_width="match_parent"
             android:gravity="center"
+            android:background="@android:color/holo_red_dark"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_large"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
             android:text="文件下载" />
 
         <Button
             android:id="@+id/btn_download"
             android:layout_width="match_parent"
+            android:background="@android:color/holo_red_dark"
             android:layout_height="wrap_content"
             android:text="点击下载文件" />
 
         <TextView
             android:id="@+id/tv4"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_red_dark"
             android:text="下载文件过程回调数据" />
@@ -69,11 +86,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_green_dark"
+            android:textSize="@dimen/text_size_large"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:gravity="center"
+                android:textSize="@dimen/text_size_large"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="图片加载" />
 
@@ -85,6 +108,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:gravity="center"
+                android:textSize="@dimen/text_size_large"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="图片加载(圆型)" />
 
@@ -96,6 +122,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:gravity="center"
+                android:textSize="@dimen/text_size_large"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="图片加载(圆角矩形)" />
 

@@ -17,18 +17,21 @@ import com.longzhiye.android.lib.model.http.callback.BaseCallback;
 import com.longzhiye.android.lib.model.http.callback.FileDownloadHttpCallback;
 import com.longzhiye.android.lib.model.http.callback.ListCallback;
 import com.longzhiye.android.lib.model.http.callback.ObjectCallback;
+import com.longzhiye.android.lib.model.http.callback.StringCallback;
 import com.longzhiye.android.lib.model.http.glide.transform.GlideCircleTransform;
 import com.longzhiye.android.lib.model.http.glide.transform.GlideRoundTransform;
-import com.squareup.okhttp.CacheControl;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,8 +64,10 @@ public class HttpUtil {
     private Handler mDelivery;
 
     private HttpUtil() {
-        okHttpClient = new OkHttpClient();
-        okHttpClient.setReadTimeout(AppConfig.NET_TIME_OUT, TimeUnit.SECONDS);//设置超时时间
+        okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(AppConfig.NET_TIME_OUT, TimeUnit.SECONDS)
+                .readTimeout(AppConfig.NET_TIME_OUT, TimeUnit.SECONDS)
+                .build();
         mDelivery = new Handler(Looper.getMainLooper());
 
     }
@@ -84,7 +89,8 @@ public class HttpUtil {
      * @param context
      */
     public void cancelNet(Context context) {
-        okHttpClient.cancel(context);
+//        okHttpClient.cancel(context);
+        okHttpClient.dispatcher().cancelAll();
     }
 
     /**
@@ -106,8 +112,11 @@ public class HttpUtil {
      *
      * @param context
      * @param url
+     * @param params
+     * @param tClass
+     * @param baseCallback
      */
-    public void sendGet(@NonNull Context context, @NonNull String url, Map<String, String> params, final Class<?> tClass,
+    public void sendGet(@NonNull Context context, @NonNull String url, JSONObject params, final Class<?> tClass,
                         @NonNull final BaseCallback baseCallback) {
         if (params != null) {
             // 组装url和参数
@@ -124,24 +133,29 @@ public class HttpUtil {
     /**
      * 组装get请求的url和参数
      *
-     * @param url
-     * @param params
+     * @param url    请求地址
+     * @param params 请求的json参数
      * @return
      */
-    private String getEncodedUrl(String url, Map<String, String> params) {
+    private String getEncodedUrl(String url, JSONObject params) {
         StringBuilder builder = new StringBuilder();
         builder.append(url).append("?");
+
         // 拼接参数
-        Iterator iterator = params.entrySet().iterator();
+        Iterator iterator = params.keys();
         while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String key = (String) entry.getKey();
-            String val = (String) entry.getValue();
+            String key = (String) iterator.next();
+            String value = null;
+            try {
+                value = params.getString(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             try {
                 // 进行url编码
                 key = URLEncoder.encode(key, "UTF-8");
-                val = URLEncoder.encode(val, "UTF-8");
-                builder.append(key).append("=").append(val).append("&");
+                value = URLEncoder.encode(value, "UTF-8");
+                builder.append(key).append("=").append(value).append("&");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -173,6 +187,7 @@ public class HttpUtil {
      * @param context
      * @param url
      * @param params
+     * @param tClass
      * @param baseCallback
      */
     public void sendPost(@NonNull final Context context, @NonNull String url, JSONObject params, final Class<?> tClass,
@@ -181,12 +196,34 @@ public class HttpUtil {
             params = new JSONObject();
         }
         LogUtil.d(TAG, url + params.toString());
-        // 组装请求参数
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), params.toString());
-        //
+
+        if (params == null) {
+            params = new JSONObject();
+        }
+
+//        // 提交类型为表单提交
+//        MultipartBody.Builder builder = new MultipartBody.Builder();
+//        builder.setType(MultipartBody.FORM);
+//        // 表单提交同时添加参数
+//        Iterator it = params.keys();
+//        while (it.hasNext()) {
+//            try {
+//                String key = it.next().toString();
+//                String value = params.getString(key);
+//                builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"" + key + "\""),
+//                        RequestBody.create(null, value));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        RequestBody builder = RequestBody
+                .create(MediaType.parse("application/json; charset=utf-8"), params.toString());
+
+
         final Request request = new Request.Builder()
                 .url(url)// 请求地址
-                .post(requestBody)// 参数
+                .post(builder)// 参数
                 .tag(context)// 标签
                 .build();
         responseCallback(context, tClass, request, baseCallback);
@@ -206,13 +243,14 @@ public class HttpUtil {
         okHttpClient.newCall(request).enqueue(new Callback() {
 
             @Override
-            public void onFailure(Request request, IOException e) {
+            public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                onFailDelivery(baseCallback, context, AppConfig.RESPONSE_ERROR_NOT_FOUND, null);
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
-                String responseResult = response.body().string();
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseResult = response.body().string();
                 LogUtil.d(TAG, responseResult);
                 if (response.isSuccessful()) {
                     if (baseCallback instanceof ObjectCallback) {// 返回object
@@ -222,7 +260,7 @@ public class HttpUtil {
                             JSONObject jsonObject = new JSONObject(responseResult);
                             if (jsonObject.getInt(AppConfig.RESPONSE_CODE_NAME) == AppConfig.RESPONSE_SUCCESS_CODE) {// App服务器的返回码是否为约定的成功返回码
                                 // 转换数据
-                                final Object object = ((ObjectCallback) baseCallback).parseNetworkResponse(jsonObject.getJSONObject(AppConfig.RESPONSE_DATA_NAME).toString());
+                                final Object object = ((ObjectCallback) baseCallback).parseNetworkResponse(jsonObject.optJSONObject(AppConfig.RESPONSE_DATA_NAME).toString());
                                 // 将得到的数据返回到主线程中
                                 mDelivery.post(new Runnable() {
                                     @Override
@@ -232,7 +270,7 @@ public class HttpUtil {
                                     }
                                 });
                             } else {// 返回App服务器的错误返回码
-                                onFailDelivery(baseCallback, context, jsonObject.getInt(AppConfig.RESPONSE_CODE_NAME));
+                                onFailDelivery(baseCallback, context, jsonObject.getInt(AppConfig.RESPONSE_CODE_NAME), jsonObject.getString(AppConfig.RESPONSE_MSG_NAME));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -254,9 +292,28 @@ public class HttpUtil {
                                     }
                                 });
                             } else {// 返回App服务器的错误返回码
-                                onFailDelivery(baseCallback, context, jsonObject.getInt(AppConfig.RESPONSE_CODE_NAME));
+                                onFailDelivery(baseCallback, context, jsonObject.getInt(AppConfig.RESPONSE_CODE_NAME), jsonObject.getString(AppConfig.RESPONSE_MSG_NAME));
                             }
                         } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else if (baseCallback instanceof StringCallback) { // 返回String
+                        try {
+                            JSONObject jsonObject3 = new JSONObject(responseResult);
+                            if (jsonObject3.getInt(AppConfig.RESPONSE_CODE_NAME) == AppConfig.RESPONSE_SUCCESS_CODE) {
+                                mDelivery.post(new Runnable() {
+                                                   @Override
+                                                   public void run() {
+                                                       baseCallback.onEnd();
+                                                       ((StringCallback) baseCallback).onResponse(responseResult);
+                                                   }
+                                               }
+                                );
+                            } else {// 返回App服务器的错误返回码
+                                onFailDelivery(baseCallback, context, jsonObject3.getInt(AppConfig.RESPONSE_CODE_NAME), jsonObject3.getString(AppConfig.RESPONSE_MSG_NAME));
+                            }
+                        } catch (Exception e) {
+                            LogUtil.d(TAG, e.getMessage());
                             e.printStackTrace();
                         }
                     } else {// 返回string
@@ -264,7 +321,7 @@ public class HttpUtil {
                     }
                 } else {// 请求错误
                     LogUtil.d(TAG, "网络错误代码:" + response.code() + ",网络错误信息:" + response.message());
-                    onFailDelivery(baseCallback, context, response.code());
+                    onFailDelivery(baseCallback, context, response.code(), null);
                 }
             }
 
@@ -307,13 +364,14 @@ public class HttpUtil {
      * @param callback
      * @param context
      * @param errorCode
+     * @param errorTip
      */
-    private void onFailDelivery(final BaseCallback callback, final Context context, final int errorCode) {
+    private void onFailDelivery(final BaseCallback callback, final Context context, final int errorCode, final String errorTip) {
         mDelivery.post(new Runnable() {
             @Override
             public void run() {
                 callback.onEnd();
-                callback.onError(context, errorCode);
+                callback.onError(context, errorCode, errorTip);
             }
         });
     }
@@ -361,7 +419,7 @@ public class HttpUtil {
         Map<String, String> temp = null;
         if (filePath != null) {
             temp = new HashMap();
-            temp.put("file", filePath);
+            temp.put("url", filePath);
         }
         uploadFiles(context, url, temp, params, tClass, baseCallback);
     }
@@ -376,23 +434,26 @@ public class HttpUtil {
      * @return
      */
     private Request buildMultipartFormRequest(Context context, String url, Map<String, String> files, JSONObject params) {
+
         // 提交类型为表单提交
-        MultipartBuilder builder = new MultipartBuilder()
-                .type(MultipartBuilder.FORM);
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM);
 
         if (params != null) {
-            // 表单提交同时添加参数
-            Iterator it = params.keys();
-            while (it.hasNext()) {
-                try {
-                    String key = it.next().toString();
-                    String value = params.getString(key);
-                    builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"" + key + "\""),
-                            RequestBody.create(null, value));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+//            // 表单提交同时添加参数
+//            Iterator it = params.keys();
+//            while (it.hasNext()) {
+//                try {
+//                    String key = it.next().toString();
+//                    String value = params.getString(key);
+//                    builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"" + key + "\""),
+//                            RequestBody.create(null, value));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+            builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"data\""),
+                    RequestBody.create(null, params.toString()));
         }
         // 添加多个文件
         if (files != null) {
@@ -440,6 +501,7 @@ public class HttpUtil {
      * @param callback
      */
     public void downloadFile(final Context context, final String url, final FileDownloadHttpCallback callback) {
+        LogUtil.d(TAG, url);
         HashMap<String, String> headers = null;
         HashMap<String, String> params = null;
 //        HashMap<String, String> headers = customRequest.getHeaders();
@@ -476,25 +538,15 @@ public class HttpUtil {
         onStartDelivery(callback);
 
         OkHttpClient client = addDownloadInterceptor(okHttpClient, callback);
-        // 设置连接时间
-        client.setConnectTimeout(30, TimeUnit.SECONDS);
-        // 设置写入时间
-        client.setWriteTimeout(30, TimeUnit.SECONDS);
-        // 设置读取时间
-        client.setReadTimeout(30, TimeUnit.SECONDS);
-
-//        if (!TextUtils.isEmpty(tag)) {
-//            mDownloadMap.put(tag, client);
-//        }
         client.newCall(request).enqueue(new Callback() {
 
             @Override
-            public void onFailure(Request request, IOException e) {
+            public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     try {
                         callback.onEnd();
@@ -506,11 +558,11 @@ public class HttpUtil {
                         onDownloadSuccessDelivery(callback, file);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        onFailDelivery(callback, context, AppConfig.RESPONSE_ERROR_DOWN_FILE_ERROR);
+                        onFailDelivery(callback, context, AppConfig.RESPONSE_ERROR_DOWN_FILE_ERROR, null);
                     }
                 } else {
                     LogUtil.d(TAG, "网络错误代码:" + response.code() + ",网络错误信息:" + response.message());
-                    onFailDelivery(callback, context, response.code());
+                    onFailDelivery(callback, context, response.code(), null);
                 }
             }
         });
@@ -525,19 +577,20 @@ public class HttpUtil {
      */
     private OkHttpClient addDownloadInterceptor(OkHttpClient client, final FileDownloadHttpCallback progressListener) {
         //克隆
-        OkHttpClient clone = client.clone();
-        //增加拦截器
-        clone.networkInterceptors().add(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                //拦截
-                Response originalResponse = chain.proceed(chain.request());
-                //包装响应体并返回
-                return originalResponse.newBuilder()
-                        .body(new ProgressResponseBody(originalResponse.body(), progressListener, mDelivery))
-                        .build();
-            }
-        });
+        OkHttpClient clone = client.newBuilder()
+                .addNetworkInterceptor(new Interceptor() {//增加拦截器
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        //拦截
+                        Response originalResponse = chain.proceed(chain.request());
+                        //包装响应体并返回
+                        return originalResponse.newBuilder()
+                                .body(new ProgressResponseBody(originalResponse.body(), progressListener, mDelivery))
+                                .build();
+                    }
+                })
+                .build();
+
         return clone;
     }
 
@@ -576,6 +629,8 @@ public class HttpUtil {
     }
 
     /**
+     * 加载图片
+     *
      * @param context
      * @param url
      * @param imageView

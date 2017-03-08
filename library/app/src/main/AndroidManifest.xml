@@ -1,18 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.longzhiye.android.demo">
+    package="com.longzhiye.android.libdemo">
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
-        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name=".MyApplication"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".ui.activity.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".ui.home.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,17 +20,20 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activity.net.NetActivity" />
+        <activity android:name=".ui.net.NetActivity"/>
 
-        <activity android:name=".ui.activity.titlebar.TitleBarActivity" />
+        <activity android:name=".ui.titlebar.TitleBarActivity"/>
 
-        <activity android:name=".ui.activity.pulltorefresh.PulltorefreshActivity" />
-        <activity android:name=".ui.activity.pulltorefresh.PullListViewActivity" />
-        <activity android:name=".ui.activity.pulltorefresh.PullGridViewActivity" />
-        <activity android:name=".ui.activity.pulltorefresh.PullScrollViewActivity" />
-        <activity android:name=".ui.activity.pulltorefresh.PullReyclerViewActivity" />
+        <activity android:name=".ui.pulltorefresh.PulltorefreshActivity" />
+        <activity android:name=".ui.pulltorefresh.PullListViewActivity" />
+        <activity android:name=".ui.pulltorefresh.PullGridViewActivity" />
+        <activity android:name=".ui.pulltorefresh.PullScrollViewActivity" />
+        <activity android:name=".ui.pulltorefresh.PullReyclerViewActivity" />
 
-        <activity android:name=".ui.activity.selectimg.SelectImgActivity" />
+        <activity android:name=".ui.selectimg.SelectImgActivity"/>
+
+        <activity android:name=".ui.permissions.PermissionsActivity"/>
+
     </application>
 
 </manifest>

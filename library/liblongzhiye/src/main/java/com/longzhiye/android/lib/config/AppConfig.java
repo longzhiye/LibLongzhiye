@@ -23,25 +23,20 @@ public class AppConfig {
     /**
      * 项目路径
      */
-    public static final String PROJECT_PATH = Environment
-            .getExternalStorageDirectory().getAbsolutePath()
-            + java.io.File.separator
-            + "Longzhiye" + java.io.File.separator;
+    public static final String PROJECT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
+            + java.io.File.separator + "liblongzhiye" + java.io.File.separator;
     /**
      * 项目图片路径
      */
-    public static final String PROJECT_IMAGE_PATH = PROJECT_PATH + "Image"
-            + java.io.File.separator;
+    public static final String PROJECT_IMAGE_PATH = PROJECT_PATH + "Image" + java.io.File.separator;
     /**
      * 项目下载路径
      */
-    public static final String PROJECT_DOWNLOAD_PATH = PROJECT_PATH + "Download"
-            + java.io.File.separator;
+    public static final String PROJECT_DOWNLOAD_PATH = PROJECT_PATH + "Download" + java.io.File.separator;
     /**
      * 项目临时路径
      */
-    public static final String PROJECT_TEMP_PATH = PROJECT_PATH + "Temp"
-            + java.io.File.separator;
+    public static final String PROJECT_TEMP_PATH = PROJECT_PATH + "Temp" + java.io.File.separator;
 
     /**
      * 服务器返回成功码
@@ -58,24 +53,32 @@ public class AppConfig {
     /**
      * 服务器返回消息参数名
      */
-    public static final String RESPONSE_MSG_NAME = "message";
+    public static final String RESPONSE_MSG_NAME = "msg";
     /**
      * 服务器返回数据参数名
      */
     public static final String RESPONSE_DATA_NAME = "data";
 
     /**
-     * 当前页名称
+     * 请求名称符文令牌
      */
-    public static final String PAGE_NAME = "page";
+    public static final String REQUEST_NAME_TOKEN = "accesstoken";
     /**
-     * 页面大小名称
+     * 请求名称当前页
      */
-    public static final String PAGE_SIZE_NAME = "page_size";
+    public static final String REQUEST_NAME_PAGE = "pageNum";
     /**
-     * 页面大小
+     * 请求名称页面大小
      */
-    public static final Integer PAGE_SIZE = 10;
+    public static final String REQUEST_NAME_PAGE_SIZE = "pageSize";
+    /**
+     * 首页的页码
+     */
+    public static final Integer FIRST_PAGE = 0;
+    /**
+     * 请求名称页面大小
+     */
+    public static final Integer REQUEST_PAGE_SIZE = 10;
 
     /**
      * 重新登录
@@ -97,6 +100,5 @@ public class AppConfig {
      * 网络错误
      */
     public static final int RESPONSE_ERROR_NET_ERROR = 500;
-
 
 }

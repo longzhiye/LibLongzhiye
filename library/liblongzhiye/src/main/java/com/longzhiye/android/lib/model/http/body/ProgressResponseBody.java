@@ -3,11 +3,11 @@ package com.longzhiye.android.lib.model.http.body;
 import android.os.Handler;
 
 import com.longzhiye.android.lib.model.http.callback.FileDownloadHttpCallback;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
 import okio.ForwardingSource;
@@ -59,7 +59,7 @@ public class ProgressResponseBody extends ResponseBody {
      * @throws IOException 异常
      */
     @Override
-    public long contentLength() throws IOException {
+    public long contentLength() {
         return responseBody.contentLength();
     }
 
@@ -70,7 +70,7 @@ public class ProgressResponseBody extends ResponseBody {
      * @throws IOException 异常
      */
     @Override
-    public BufferedSource source() throws IOException {
+    public BufferedSource source() {
         if (bufferedSource == null) {
             //包装
             bufferedSource = Okio.buffer(source(responseBody.source()));
@@ -100,11 +100,7 @@ public class ProgressResponseBody extends ResponseBody {
                     delivery.post(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                progressListener.onProgress(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            progressListener.onProgress(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
                         }
                     });
                 }

@@ -33,6 +33,12 @@ public abstract class TitleBarBaseActivity extends BaseActivity implements Title
         super.onCreate(savedInstanceState);
         LayoutInflater localLayoutInflater = LayoutInflater.from(this);
         initView();
+        setLeftButton(R.mipmap.ic_back, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         if (setContentContainerBg() != -1) {
             this.llContentContainer
                     .setBackgroundResource(setContentContainerBg());
@@ -174,6 +180,14 @@ public abstract class TitleBarBaseActivity extends BaseActivity implements Title
     public void setRightButtonSecond(int paramInt,
                                      View.OnClickListener paramOnClickListener) {
         this.titleInteface.setRightButtonSecond(paramInt, paramOnClickListener);
+    }
+
+    /**
+     * 设置右边第二个按钮
+     */
+    public void setRightButtonSecond(CharSequence paramCharSequence,
+                                     View.OnClickListener paramOnClickListener) {
+        this.titleInteface.setRightButtonSecond(paramCharSequence, paramOnClickListener);
     }
 
     /**

@@ -276,6 +276,15 @@ public class TitleBar extends LinearLayout {
     }
 
     /**
+     * 设置右边第二个按钮的文本
+     *
+     * @param paramInt
+     */
+    public void setRightButtonSecondText(CharSequence paramCharSequence) {
+        tvBtnRightSecond.setText(paramCharSequence);
+    }
+
+    /**
      * 设置右边第二个按钮的文本颜色
      *
      * @param paramInt
