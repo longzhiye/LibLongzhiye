@@ -9,6 +9,7 @@ com.longzhiye.android.lib.model.http.glide.transform
 com.longzhiye.android.lib.ui.activity
 com.longzhiye.android.lib.ui.activity.titlebar
 com.longzhiye.android.lib.ui.activity.titlebar.view
+com.longzhiye.android.lib.ui.base
 com.longzhiye.android.lib.ui.fragment
 com.longzhiye.android.lib.ui.fragment.titlebar
 com.longzhiye.android.lib.ui.view
@@ -17,3 +18,11 @@ com.longzhiye.android.lib.ui.view.recycler.itemdecoration
 com.longzhiye.android.lib.ui.view.recycler.layoutmanager
 com.longzhiye.android.lib.ui.view.recycler.listener
 com.longzhiye.android.lib.ui.view.selectimg
+com.longzhiye.android.libdemo
+com.longzhiye.android.libdemo.model.bean
+com.longzhiye.android.libdemo.ui.home
+com.longzhiye.android.libdemo.ui.net
+com.longzhiye.android.libdemo.ui.permissions
+com.longzhiye.android.libdemo.ui.pulltorefresh
+com.longzhiye.android.libdemo.ui.selectimg
+com.longzhiye.android.libdemo.ui.titlebar
