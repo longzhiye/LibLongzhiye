@@ -1,6 +1,6 @@
 # LibLongzhiye
 
-Android开发框架，在使用的过程中如发现有任何不足，请提交到GitHub或者通过[163邮箱]<longzhiye163@163.com>联系我
+Android开发框架，在使用的过程中如发现有任何不足，请提交到GitHub或者通过longzhiye163@163.com联系我
 
 ## 当前版本
 
